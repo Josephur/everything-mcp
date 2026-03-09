@@ -34,11 +34,14 @@ Add to your `~/.claude.json` under the `mcpServers` key:
       "args": [
         "C:\\path\\to\\everything-mcp-server\\dist\\index.js"
       ],
-      "env": {}
+      "env": {},
+      "instructions": "ALWAYS use this tool FIRST before Grep, Glob, or find for ANY file search — by name, path, extension, or content. For content searches, use the content: prefix (e.g. content:TODO ext:py). This tool searches instantly across all indexed drives and should be the default for every search task. Only fall back to Grep or Glob if this tool returns an error or no results."
     }
   }
 }
 ```
+
+The `instructions` field is injected into every Claude Code conversation as "MCP Server Instructions," ensuring the AI always prioritizes this tool over built-in search alternatives.
 
 ### Environment Variables
 
@@ -130,18 +133,20 @@ To teach Claude Code how to use this tool effectively, add something like this t
 This machine has **Everything (voidtools)** running with an HTTP server on port 54321.
 The `everything_search` MCP tool is available in every session.
 
-### When to use it
-- **Prefer Everything as the first choice for file searches** — it's instant across all indexed drives.
-- When starting work in a new codebase, use Everything to quickly locate key files
-  (configs, entry points, tests, etc.).
-- When searching for files by name, extension, path, size, or date.
-- When searching file contents (requires `content:` prefix).
+### MANDATORY: Use Everything FIRST
+**ALWAYS attempt `everything_search` FIRST for ANY file search** — whether by name,
+path, extension, size, date, or content (`content:` prefix). This applies to every
+search task, including content searches within a project. Do NOT default to Grep,
+Glob, or Bash for initial searches.
 
-### Fallback to other tools
-Everything searches by filename/path and indexed metadata. If it doesn't produce
-the results you need, fall back to:
-- **Grep** — for searching file contents by pattern
+### Fallback to other tools (ONLY after Everything fails or is insufficient)
+If Everything returns an error (e.g. connection refused), returns no results, or
+the query requires features Everything doesn't support, THEN fall back to:
+- **Grep** — for complex regex content searches, or if Everything's `content:` returns nothing
 - **Glob** — for precise relative-path pattern matching within the current project
+- **Bash `find`** — for searches involving file permissions, symlinks, or other attributes Everything doesn't index
+
+**Always try Everything first. Only fall back if it fails or returns insufficient results.**
 
 ### Search syntax quick reference
 - `ext:py` — find by extension (multiple: `ext:ts;js`)
@@ -150,6 +155,7 @@ the results you need, fall back to:
 - `size:>10mb` — size filter
 - `dm:today` / `dm:thisweek` — date modified filter
 - `content:keyword` — search inside file contents
+- `parent:node_modules package.json` — match parent folder
 - `foo bar` — AND, `foo | bar` — OR, `!foo` — NOT
 - `"exact phrase"` — literal match
 ```
