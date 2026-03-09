@@ -2,6 +2,7 @@
   "name": "everything-mcp-server",
   "version": "1.0.0",
   "description": "MCP server for Everything (voidtools) file search",
+  "license": "MIT",
   "type": "module",
   "bin": {
     "everything-mcp-server": "dist/index.js"
