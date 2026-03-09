@@ -4,6 +4,8 @@ An [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) server that 
 
 Everything is a lightning-fast file search engine for Windows that indexes all files and folders on NTFS drives. This MCP server exposes Everything's search as a tool that AI assistants can call, enabling them to find files across your system in milliseconds.
 
+![Screenshot](Screenshot.png)
+
 ## Prerequisites
 
 - **Windows** with [Everything](https://www.voidtools.com/) installed and running
