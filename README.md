@@ -153,6 +153,7 @@ the query requires features Everything doesn't support, THEN fall back to:
 ### Search syntax quick reference
 - `ext:py` — find by extension (multiple: `ext:ts;js`)
 - `path:src\components` — match against full path
+- `count:10` — limit number of results to 100
 - `*.config.*` — wildcards
 - `size:>10mb` — size filter
 - `dm:today` / `dm:thisweek` — date modified filter
