@@ -1,0 +1,20 @@
+{
+  "name": "everything-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Everything (voidtools) file search",
+  "type": "module",
+  "bin": {
+    "everything-mcp-server": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "typescript": "^5.8.2"
+  }
+}
