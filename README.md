@@ -51,7 +51,7 @@ claude mcp remove --scope user everything-search
 
 ### CLAUDE.md Instructions
 
-The `claude mcp add` command doesn't support an `instructions` field. To teach Claude how to prioritize this tool, add the following to your global `~/.claude/CLAUDE.md` file, make sure to change the port number to the port number your Everything HTTP Plugin is listening on (create it if it doesn't exist):
+The `claude mcp add` command doesn't support an `instructions` field. To teach Claude how to prioritize this tool, add the following to your global `~/.claude/CLAUDE.md` file (create it if it doesn't exist), make sure to change the port number to the port number your Everything HTTP Plugin is listening on:
 
 ```markdown
 ## Everything Search (MCP Tool)
