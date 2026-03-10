@@ -185,6 +185,7 @@ content:TODO ext:py             # Python files containing "TODO"
 ## Example: Global CLAUDE.md Instructions
 
 To teach Claude Code how to use this tool effectively, add something like this to your `~/.claude/CLAUDE.md`:
+(make sure to change the port number to the port number your Everything HTTP Plugin is listening on)
 
 ```markdown
 ## Everything Search (MCP Tool)
@@ -241,3 +242,4 @@ src/
   everything.ts   # Everything HTTP API client
   types.ts        # TypeScript interfaces
 ```
+
