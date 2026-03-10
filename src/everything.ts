@@ -3,6 +3,7 @@ import { EverythingResponse, SearchParams } from "./types.js";
 const EVERYTHING_HOST = process.env.EVERYTHING_HOST || "localhost";
 const EVERYTHING_PORT = process.env.EVERYTHING_PORT || "54321";
 const PROJECT_PATH = process.env.PROJECT_PATH || "";
+export const MAX_RESULTS = Math.max(1, Number(process.env.EVERYTHING_MAX_RESULTS) || 255);
 
 const FILETIME_EPOCH_DIFF = 11644473600000n; // ms between 1601-01-01 and 1970-01-01
 const FILETIME_TICKS_PER_MS = 10000n;

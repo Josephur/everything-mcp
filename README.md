@@ -51,9 +51,33 @@ The `instructions` field is injected into every Claude Code conversation as "MCP
 |----------|---------|-------------|
 | `EVERYTHING_HOST` | `localhost` | Everything HTTP server hostname |
 | `EVERYTHING_PORT` | `54321` | Everything HTTP server port |
+| `EVERYTHING_MAX_RESULTS` | `255` | Max results per query — see [Result Limit](#result-limit) |
 | `PROJECT_PATH` | _(none)_ | Default project path for auto-scoping searches |
 
 Set the port to match your Everything HTTP server configuration (Everything > Tools > Options > HTTP Server).
+
+### Result Limit
+
+To keep token usage under control, the server caps the maximum number of results returned per query to **255** by default. The AI can still request fewer results via the `count` parameter, but it can never exceed this cap.
+
+If you need more results per query, increase the limit by setting `EVERYTHING_MAX_RESULTS` in your MCP server config:
+
+```json
+{
+  "mcpServers": {
+    "everything-search": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["C:\\path\\to\\everything-mcp-server\\dist\\index.js"],
+      "env": {
+        "EVERYTHING_MAX_RESULTS": "500"
+      }
+    }
+  }
+}
+```
+
+Higher values return more results but consume more tokens per search. For most use cases, the default of 255 is a good balance. If you find searches are missing results, try increasing it. If you want to reduce token usage further, lower it (e.g. `"100"`).
 
 ## How It Works
 
@@ -84,7 +108,7 @@ By default, searches are automatically scoped to the current project folder usin
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `query` | string | _(required)_ | Everything search query |
-| `count` | number | `50` | Max results to return (max 1000) |
+| `count` | number | `50` | Max results to return (max 255, configurable via `EVERYTHING_MAX_RESULTS` env var) |
 | `offset` | number | `0` | Result offset for pagination |
 | `sort` | string | `"name"` | Sort by: `name`, `path`, `size`, `date_modified` |
 | `ascending` | boolean | `true` | Sort direction |

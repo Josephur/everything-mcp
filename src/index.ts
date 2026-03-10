@@ -5,7 +5,7 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { searchEverything } from "./everything.js";
+import { searchEverything, MAX_RESULTS } from "./everything.js";
 import { SearchParams } from "./types.js";
 
 const server = new Server(
@@ -56,7 +56,7 @@ Examples:
             },
             count: {
               type: "number",
-              description: "Max results to return (default 50, max 1000)",
+              description: `Max results to return (default 50, max ${MAX_RESULTS}). The max is configurable via the EVERYTHING_MAX_RESULTS env var in your MCP server settings.`,
               default: 50,
             },
             offset: {
@@ -121,7 +121,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const args = request.params.arguments as Record<string, unknown>;
   const params: SearchParams = {
     query: args.query as string,
-    count: Math.min(Number(args.count ?? 50), 1000),
+    count: Math.min(Number(args.count ?? 50), MAX_RESULTS),
     offset: Number(args.offset ?? 0),
     sort: (args.sort as string) ?? "name",
     ascending: (args.ascending as boolean) ?? true,
