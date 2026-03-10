@@ -14,6 +14,14 @@ function filetimeToISO(filetime: string): string {
   return new Date(Number(ms)).toISOString();
 }
 
+function formatDuration(ms: number): string {
+  if (ms < 1000) return `${Math.round(ms)}ms`;
+  if (ms < 60000) return `${(ms / 1000).toFixed(2)}s`;
+  const minutes = Math.floor(ms / 60000);
+  const seconds = ((ms % 60000) / 1000).toFixed(1);
+  return `${minutes}m ${seconds}s`;
+}
+
 function formatSize(sizeStr: string): string {
   const size = Number(sizeStr);
   if (size < 1024) return `${size} B`;
@@ -58,6 +66,7 @@ export async function searchEverything(params: SearchParams): Promise<string> {
   }
 
   let response: Response;
+  const startTime = performance.now();
   try {
     response = await fetch(url.toString());
   } catch (error) {
@@ -73,10 +82,11 @@ export async function searchEverything(params: SearchParams): Promise<string> {
   }
 
   const data: EverythingResponse = await response.json();
+  const elapsed = performance.now() - startTime;
   const end = Math.min(params.offset + params.count, data.totalResults);
 
   const lines: string[] = [];
-  lines.push(`Found ${data.totalResults} results (showing ${params.offset + 1}-${end})`);
+  lines.push(`Found ${data.totalResults} results (showing ${params.offset + 1}-${end}) in ${formatDuration(elapsed)}`);
   lines.push("");
 
   for (const r of data.results) {
