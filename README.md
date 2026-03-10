@@ -25,25 +25,69 @@ npm run build
 
 ### Claude Code
 
-Add to your `~/.claude.json` under the `mcpServers` key:
+Run this command from the cloned repository directory:
 
-```json
-{
-  "mcpServers": {
-    "everything-search": {
-      "type": "stdio",
-      "command": "node",
-      "args": [
-        "C:\\path\\to\\everything-mcp-server\\dist\\index.js"
-      ],
-      "env": {},
-      "instructions": "ALWAYS use this tool FIRST before Grep, Glob, or find for ANY file search — by name, path, extension, or content. For content searches, use the content: prefix (e.g. content:TODO ext:py). This tool searches instantly across all indexed drives and should be the default for every search task. Only fall back to Grep or Glob if this tool returns an error or no results."
-    }
-  }
-}
+```bash
+claude mcp add --scope user everything-search -- node /path/to/everything-mcp-server/dist/index.js
 ```
 
-The `instructions` field is injected into every Claude Code conversation as "MCP Server Instructions," ensuring the AI always prioritizes this tool over built-in search alternatives.
+This registers the MCP server globally so it's available in every Claude Code project. Replace `/path/to/everything-mcp-server` with the actual path where you cloned the repo.
+
+**Scope options:**
+- `--scope user` — available in all projects (recommended)
+- `--scope project` — only available in the current project
+
+To verify it was added:
+
+```bash
+claude mcp list
+```
+
+To remove it later:
+
+```bash
+claude mcp remove --scope user everything-search
+```
+
+### CLAUDE.md Instructions
+
+The `claude mcp add` command doesn't support an `instructions` field. To teach Claude how to prioritize this tool, add the following to your global `~/.claude/CLAUDE.md` file, make sure to change the port number to the port number your Everything HTTP Plugin is listening on (create it if it doesn't exist):
+
+```markdown
+## Everything Search (MCP Tool)
+
+This machine has **Everything (voidtools)** running with an HTTP server on port 54321.
+The `everything_search` MCP tool is available in every session.
+
+### MANDATORY: Use Everything FIRST
+**ALWAYS attempt `everything_search` FIRST for ANY file search** — whether by name,
+path, extension, size, date, or content (`content:` prefix). This applies to every
+search task, including content searches within a project. Do NOT default to Grep,
+Glob, or Bash for initial searches.
+
+### Fallback to other tools (ONLY after Everything fails or is insufficient)
+If Everything returns an error (e.g. connection refused), returns no results, or
+the query requires features Everything doesn't support, THEN fall back to:
+- **Grep** — for complex regex content searches, or if Everything's `content:` returns nothing
+- **Glob** — for precise relative-path pattern matching within the current project
+- **Bash `find`** — for searches involving file permissions, symlinks, or other attributes Everything doesn't index
+
+**Always try Everything first. Only fall back if it fails or returns insufficient results.**
+
+### Search syntax quick reference
+- `ext:py` — find by extension (multiple: `ext:ts;js`)
+- `path:src\components` — match against full path
+- `count:10` — limit number of results to 10
+- `*.config.*` — wildcards
+- `size:>10mb` — size filter
+- `dm:today` / `dm:thisweek` — date modified filter
+- `content:keyword` — search inside file contents
+- `parent:node_modules package.json` — match parent folder
+- `foo bar` — AND, `foo | bar` — OR, `!foo` — NOT
+- `"exact phrase"` — literal match
+```
+
+This ensures Claude always prioritizes Everything over built-in search tools.
 
 ### Environment Variables
 
@@ -60,21 +104,10 @@ Set the port to match your Everything HTTP server configuration (Everything > To
 
 To keep token usage under control, the server caps the maximum number of results returned per query to **255** by default. The AI can still request fewer results via the `count` parameter, but it can never exceed this cap.
 
-If you need more results per query, increase the limit by setting `EVERYTHING_MAX_RESULTS` in your MCP server config:
+If you need more results per query, increase the limit by setting `EVERYTHING_MAX_RESULTS` when adding the server:
 
-```json
-{
-  "mcpServers": {
-    "everything-search": {
-      "type": "stdio",
-      "command": "node",
-      "args": ["C:\\path\\to\\everything-mcp-server\\dist\\index.js"],
-      "env": {
-        "EVERYTHING_MAX_RESULTS": "500"
-      }
-    }
-  }
-}
+```bash
+claude mcp add --scope user everything-search -e EVERYTHING_MAX_RESULTS=500 -- node /path/to/everything-mcp-server/dist/index.js
 ```
 
 Higher values return more results but consume more tokens per search. For most use cases, the default of 255 is a good balance. If you find searches are missing results, try increasing it. If you want to reduce token usage further, lower it (e.g. `"100"`).
