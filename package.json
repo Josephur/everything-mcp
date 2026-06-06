@@ -1,11 +1,11 @@
 {
-  "name": "everything-mcp-server",
+  "name": "everything-mcp",
   "version": "1.0.0",
   "description": "MCP server for Everything (voidtools) file search",
   "license": "MIT",
   "type": "module",
   "bin": {
-    "everything-mcp-server": "dist/index.js"
+    "everything-mcp": "dist/index.js"
   },
   "scripts": {
     "build": "tsc",
