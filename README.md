@@ -15,8 +15,8 @@ Everything is a lightning-fast file search engine for Windows that indexes all f
 ## Installation
 
 ```bash
-git clone https://github.com/Josephur/everything-mcp-server.git
-cd everything-mcp-server
+git clone https://github.com/Josephur/everything-mcp.git
+cd everything-mcp
 npm install
 npm run build
 ```
@@ -28,10 +28,10 @@ npm run build
 Run this command from the cloned repository directory:
 
 ```bash
-claude mcp add --scope user everything-search -- node /path/to/everything-mcp-server/dist/index.js
+claude mcp add --scope user everything-search -- node /path/to/everything-mcp/dist/index.js
 ```
 
-This registers the MCP server globally so it's available in every Claude Code project. Replace `/path/to/everything-mcp-server` with the actual path where you cloned the repo.
+This registers the MCP server globally so it's available in every Claude Code project. Replace `/path/to/everything-mcp` with the actual path where you cloned the repo.
 
 **Scope options:**
 - `--scope user` — available in all projects (recommended)
@@ -107,7 +107,7 @@ To keep token usage under control, the server caps the maximum number of results
 If you need more results per query, increase the limit by setting `EVERYTHING_MAX_RESULTS` when adding the server:
 
 ```bash
-claude mcp add --scope user everything-search -e EVERYTHING_MAX_RESULTS=500 -- node /path/to/everything-mcp-server/dist/index.js
+claude mcp add --scope user everything-search -e EVERYTHING_MAX_RESULTS=500 -- node /path/to/everything-mcp/dist/index.js
 ```
 
 Higher values return more results but consume more tokens per search. For most use cases, the default of 255 is a good balance. If you find searches are missing results, try increasing it. If you want to reduce token usage further, lower it (e.g. `"100"`).
