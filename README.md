@@ -95,10 +95,18 @@ This ensures Claude always prioritizes Everything over built-in search tools.
 |----------|---------|-------------|
 | `EVERYTHING_HOST` | `localhost` | Everything HTTP server hostname |
 | `EVERYTHING_PORT` | `54321` | Everything HTTP server port |
+| `EVERYTHING_USERNAME` | _(none)_ | Username for the Everything HTTP server's basic authentication |
+| `EVERYTHING_PASSWORD` | _(none)_ | Password for the Everything HTTP server's basic authentication |
 | `EVERYTHING_MAX_RESULTS` | `255` | Max results per query — see [Result Limit](#result-limit) |
 | `PROJECT_PATH` | _(none)_ | Default project path for auto-scoping searches |
 
 Set the port to match your Everything HTTP server configuration (Everything > Tools > Options > HTTP Server).
+
+If your Everything HTTP server has authentication enabled (Everything > Tools > Options > HTTP Server > Authentication), set `EVERYTHING_USERNAME` and `EVERYTHING_PASSWORD`, otherwise every search fails with `401: Unauthorized`:
+
+```bash
+claude mcp add --scope user everything-search -e EVERYTHING_PORT=8085 -e EVERYTHING_USERNAME=user -e EVERYTHING_PASSWORD=pass -- node /path/to/everything-mcp/dist/index.js
+```
 
 ### Result Limit
 

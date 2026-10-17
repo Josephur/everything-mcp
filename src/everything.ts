@@ -2,6 +2,8 @@ import { EverythingResponse, SearchParams } from "./types.js";
 
 const EVERYTHING_HOST = process.env.EVERYTHING_HOST || "localhost";
 const EVERYTHING_PORT = process.env.EVERYTHING_PORT || "54321";
+const EVERYTHING_USERNAME = process.env.EVERYTHING_USERNAME || "";
+const EVERYTHING_PASSWORD = process.env.EVERYTHING_PASSWORD || "";
 const PROJECT_PATH = process.env.PROJECT_PATH || "";
 export const MAX_RESULTS = Math.max(1, Number(process.env.EVERYTHING_MAX_RESULTS) || 255);
 
@@ -65,10 +67,17 @@ export async function searchEverything(params: SearchParams): Promise<string> {
     url.searchParams.set("path", "1");
   }
 
+  // Send HTTP basic authentication credentials when configured
+  const headers: Record<string, string> = {};
+  if (EVERYTHING_USERNAME) {
+    const credentials = Buffer.from(`${EVERYTHING_USERNAME}:${EVERYTHING_PASSWORD}`).toString("base64");
+    headers["Authorization"] = `Basic ${credentials}`;
+  }
+
   let response: Response;
   const startTime = performance.now();
   try {
-    response = await fetch(url.toString());
+    response = await fetch(url.toString(), { headers });
   } catch (error) {
     throw new Error(
       `Cannot connect to Everything HTTP server at ${EVERYTHING_HOST}:${EVERYTHING_PORT}. ` +
@@ -77,6 +86,13 @@ export async function searchEverything(params: SearchParams): Promise<string> {
     );
   }
 
+  if (response.status === 401) {
+    throw new Error(
+      `Everything HTTP server returned 401: Unauthorized. ` +
+      `The server has authentication enabled (Everything > Tools > Options > HTTP Server > Authentication). ` +
+      `Set the EVERYTHING_USERNAME and EVERYTHING_PASSWORD environment variables in your MCP server configuration.`
+    );
+  }
   if (!response.ok) {
     throw new Error(`Everything HTTP server returned ${response.status}: ${response.statusText}`);
   }
